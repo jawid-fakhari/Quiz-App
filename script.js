@@ -46,7 +46,7 @@ const quizData = [
 ];
 //functions//////////////
 let arrIndex = 0;
-let score = 0;
+
 const showData = function (dataArr) {
   if (arrIndex < dataArr.length) {
     selectors.question.innerHTML = `${dataArr[arrIndex].question}`;
@@ -74,9 +74,9 @@ const controlNext = function (input) {
   const checkAnswer = selectors.btns[activeBtnIndx].innerHTML;
   if (checkAnswer === quizData[arrIndex].answer) {
     arrIndex++;
-    score++;
+  } else {
+    alert("wrong answer");
   }
-  console.log(score);
 };
 //handlers ///////////////////
 selectors.btns.forEach((btn) => {
