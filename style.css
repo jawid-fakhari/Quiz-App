@@ -58,7 +58,9 @@ body{
     cursor: pointer;
     display: none;
 }
-.active{
-    background: #001e4d;
-    color: #fff;
+.wrong{
+    background: #f36161;
+}
+.right{
+    background: #54d154;
 }

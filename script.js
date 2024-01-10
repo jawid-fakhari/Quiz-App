@@ -3,7 +3,6 @@
 const selectors = {
   question: document.querySelector("#question"),
   answerBtns: document.querySelector("#answer-buttons"),
-  btns: document.querySelectorAll(".btn"),
   nextBtn: document.querySelector("#next-btn"),
 };
 //quiz data ////////////////
@@ -44,56 +43,58 @@ const quizData = [
     answer: "color: red;",
   },
 ];
+
+let score = 0;
+let currentQuestion = 0;
+let button;
+
 //functions//////////////
-let arrIndex = 0;
 
-const showData = function (dataArr) {
-  if (arrIndex < dataArr.length) {
-    selectors.question.innerHTML = `${dataArr[arrIndex].question}`;
-    for (let i = 0; i < dataArr[arrIndex].options.length; i++) {
-      for (let j = 0; j < selectors.btns.length; j++) {
-        selectors.btns[j].innerHTML = `${dataArr[arrIndex].options[i++]}`;
-      }
-    }
-  } else {
-    selectors.nextBtn.style.display = "none";
-    selectors.btns.forEach((btn) => {
-      btn.disabled = true;
-    });
-  }
-};
-showData(quizData);
+//Show Data
+function showQuestion(question) {
+  selectors.question.textContent = question.question;
+  selectors.answerBtns.innerText = "";
 
-const controlNext = function (input) {
-  const calssLisstArr = Array.from(selectors.btns).map((btn) =>
-    Array.from(btn.classList)
-  );
-  const activeBtnIndx = calssLisstArr.findIndex((classes) =>
-    classes.includes("active")
-  );
-  const checkAnswer = selectors.btns[activeBtnIndx].innerHTML;
-  if (checkAnswer === quizData[arrIndex].answer) {
-    arrIndex++;
-  } else {
-    alert("wrong answer");
-  }
-};
-//handlers ///////////////////
-selectors.btns.forEach((btn) => {
-  btn.addEventListener("click", function () {
-    selectors.btns.forEach((otherBtn) => {
-      if (otherBtn !== btn && otherBtn.classList.contains("active")) {
-        otherBtn.classList.remove("active");
-      }
-    });
-    if (!btn.classList.contains("active")) {
-      btn.classList.add("active");
-    }
-    selectors.nextBtn.style.display = "block";
+  question.options.forEach((option) => {
+    button = document.createElement("button");
+    button.textContent = option;
+    button.classList.add("btn");
+
+    button.addEventListener("click", (e) =>
+      selectAnswer(e, option === question.answer)
+    );
+
+    selectors.answerBtns.appendChild(button);
   });
+}
+//check answer & score
+function selectAnswer(e, isCorrect) {
+  if (isCorrect) {
+    score++;
+    e.target.classList.add("right");
+  }
+  if (!isCorrect) e.target.classList.add("wrong");
+  disableButtons();
+  selectors.nextBtn.style.display = "block";
+  console.log(score);
+}
+//Disable buttons when one of them is clicked
+function disableButtons() {
+  const buttons = document.querySelectorAll(".btn");
+  buttons.forEach((button) => {
+    button.disabled = true;
+  });
+}
+//next button handler
+selectors.nextBtn.addEventListener("click", () => {
+  if (currentQuestion + 1 < quizData.length) {
+    currentQuestion++;
+    showQuestion(quizData[currentQuestion]);
+  } else {
+    selectors.answerBtns.innerText = "";
+    selectors.question.textContent = `Your answered ${score}/${quizData.length}.`;
+  }
 });
 
-selectors.nextBtn.addEventListener("click", () => {
-  controlNext();
-  showData(quizData);
-});
+//call functions
+showQuestion(quizData[currentQuestion]);
